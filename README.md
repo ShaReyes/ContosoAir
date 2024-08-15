@@ -1,4 +1,6 @@
-# This project is retired, archived, and no longer supported. You are welcome to continue to use and fork the repository.
+This project is retired, archived, and no longer supported. You are welcome to continue to use and fork the repository.
+
+![Build Status](https://dev.azure.com/charolareyes/Azure pipelines_lab/_apis/build/status/ShaReyes.ContosoAir?branchName=master)
 
 
 # Microsoft.Github CI Demo
