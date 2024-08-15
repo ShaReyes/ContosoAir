@@ -1,45 +1,37 @@
 pool:
   vmImage: 'ubuntu-latest'
+
 trigger:
   - master
-steps:
-#Install all dependecies including devDependecies
-  - task: Npm@1
-    inputs:
-      command: 'install'
 
+steps:
+  # Step 1: Install dependencies
+  - script: |
+      npm install
+    displayName: 'Install Dependencies'
+
+  # Step 2: Run tests
   - script: |
       npm test
-    displayName: 'Run unit tests'
-    continueOnError: true
+    displayName: 'Run Tests'
 
+  # Step 3: Publish test results
   - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
     displayName: 'Publish Test Results'
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: $(System.DefaultWorkingDirectory)/test-report.xml
 
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage'
-    condition: succeededOrFailed()
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/*coverage.xml'
-      reportDirectory: $(System.DefaultWorkingDirectory)/coverage
-
+  # Step 4: Archive source code
   - task: ArchiveFiles@2
-    displayName: 'Archive sources'
     inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)
+      rootFolderOrFile: '$(Build.SourcesDirectory)'
       includeRootFolder: false
+    displayName: 'Archive Sources'
 
-  - task: CopyFiles@2
-    displayName: 'Copy ARM templates'
-    inputs:
-      SourceFolder: deployment
-      Contents: '*.json'
-      TargetFolder: $(build.artifactstagingdirectory)/Templates
-
+  # Step 5: Publish build artifacts
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: drop'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+    displayName: 'Publish Artifact'
 
