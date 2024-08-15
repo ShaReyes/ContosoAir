@@ -3,10 +3,10 @@ pool:
 trigger:
   - master
 steps:
+#Install all dependecies including devDependecies
   - task: Npm@1
     inputs:
-      command: 'custom'
-      customCommand: 'install --production'
+      command: 'install'
 
   - script: |
       npm test
