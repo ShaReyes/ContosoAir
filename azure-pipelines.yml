@@ -5,33 +5,45 @@ trigger:
   - master
 
 steps:
-  # Step 1: Install dependencies
+  # Step 1: Install Python 2 (if required for node-gyp)
+  - script: |
+      sudo apt-get update
+      sudo apt-get install -y python2
+    displayName: 'Install Python 2'
+
+  # Step 2: Set Python for npm (if needed)
+  - script: |
+      npm config set python $(which python2)
+    displayName: 'Configure npm to use Python 2'
+
+  # Step 3: Install dependencies
   - script: |
       npm install
     displayName: 'Install Dependencies'
 
-  # Step 2: Run tests
+  # Step 4: Run tests
   - script: |
       npm test
     displayName: 'Run Tests'
 
-  # Step 3: Publish test results
+  # Step 5: Publish test results
   - task: PublishTestResults@2
     inputs:
       testResultsFiles: '**/test-results.xml'
     displayName: 'Publish Test Results'
 
-  # Step 4: Archive source code
+  # Step 6: Archive source code
   - task: ArchiveFiles@2
     inputs:
       rootFolderOrFile: '$(Build.SourcesDirectory)'
       includeRootFolder: false
     displayName: 'Archive Sources'
 
-  # Step 5: Publish build artifacts
+  # Step 7: Publish build artifacts
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'drop'
     displayName: 'Publish Artifact'
+
 
